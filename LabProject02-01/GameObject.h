@@ -3,9 +3,6 @@
 #include "Mesh.h"
 #include "Camera.h"
 
-// 추가
-#define BULLETS 50
-
 class CGameObject
 {
 public:
@@ -74,6 +71,8 @@ public:
 
 
 
+
+
 class CRotatingObject : public CGameObject
 {
 public:
@@ -88,6 +87,8 @@ public:
 
 	virtual void Animate(float fElapsedTime);
 };
+
+
 
 
 class CBulletObject : public CRotatingObject
@@ -114,13 +115,15 @@ public:
 };
 
 
+// 추가
+#define BULLETS 50
+
 class CExplosiveObject : public CRotatingObject
 {
 public:
 	CExplosiveObject();
 	virtual ~CExplosiveObject();
 
-	//CBulletObject* m_ppBullets[BULLETS];
 
 	bool						m_bBlowingUp = false;
 
@@ -132,10 +135,16 @@ public:
 	float						m_fExplosionRotation = 720.0f;
 
 	// 추가
+	float						m_fBulletEffectiveRange = 150.0f;
+
+	// 추가
+	CBulletObject* m_ppBullets[BULLETS];
 
 	virtual void Animate(float fElapsedTime);
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
-	//void FireBullet(CGameObject* pLockedObject);
+
+	// 추가
+	void FireBullet();
 
 public:
 	static CMesh*				m_pExplosionMesh;
@@ -143,6 +152,8 @@ public:
 
 	static void PrepareExplosion();
 };
+
+
 
 
 
@@ -158,6 +169,8 @@ public:
 
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 };
+
+
 
 class CAxisObject : public CGameObject
 {

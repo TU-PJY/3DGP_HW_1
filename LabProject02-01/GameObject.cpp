@@ -229,69 +229,34 @@ XMFLOAT3 CExplosiveObject::m_pxmf3SphereVectors[EXPLOSION_DEBRISES];
 CMesh* CExplosiveObject::m_pExplosionMesh = NULL;
 
 
+// 추가
 CExplosiveObject::CExplosiveObject()
 {
-
+	CCubeMesh* pBulletMesh = new CCubeMesh(1.0f, 4.0f, 1.0f);
+	for (int i = 0; i < BULLETS; i++)
+	{
+		m_ppBullets[i] = new CBulletObject(m_fBulletEffectiveRange);
+		m_ppBullets[i]->SetMesh(pBulletMesh);
+		m_ppBullets[i]->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 0.0f));
+		m_ppBullets[i]->SetRotationSpeed(360.0f);
+		m_ppBullets[i]->SetMovingSpeed(120.0f);
+		m_ppBullets[i]->SetActive(false);
+	}
 }
 
+// 추가
 CExplosiveObject::~CExplosiveObject()
 {
 
+	for (int i = 0; i < BULLETS; ++i)
+		if (m_ppBullets[i])
+			delete m_ppBullets[i];
 }
 
 
-// 추가
-//#define BULLETS 50
-//
-//void CExplosiveObject::Render(HDC hDCFrameBuffer, CCamera* pCamera)
-//{
-//	//CPlayer::Render(hDCFrameBuffer, pCamera);
-//
-//	for (int i = 0; i < BULLETS; i++) if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Render(hDCFrameBuffer, pCamera);
-//}
-//
-//
-//void CExplosiveObject::FireBullet(CGameObject* pLockedObject)
-//{
-//	/*
-//		if (pLockedObject)
-//		{
-//			LookAt(pLockedObject->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
-//			OnUpdateTransform();
-//		}
-//	*/
-//
-//	CBulletObject* pBulletObject = NULL;
-//	for (int i = 0; i < BULLETS; i++)
-//	{
-//		if (!m_ppBullets[i]->m_bActive)
-//		{
-//			pBulletObject = m_ppBullets[i];
-//			break;
-//		}
-//	}
-//
-//	if (pBulletObject)
-//	{
-//		XMFLOAT3 xmf3Position = GetPosition();
-//		XMFLOAT3 xmf3Direction = GetUp();
-//		XMFLOAT3 xmf3FirePosition = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Direction, 6.0f, false));
-//
-//		pBulletObject->m_xmf4x4World = m_xmf4x4World;
-//
-//		pBulletObject->SetFirePosition(xmf3FirePosition);
-//		pBulletObject->SetMovingDirection(xmf3Direction);
-//		pBulletObject->SetColor(RGB(255, 0, 0));
-//		pBulletObject->SetActive(true);
-//
-//		if (pLockedObject)
-//		{
-//			pBulletObject->m_pLockedObject = pLockedObject;
-//			pBulletObject->SetColor(RGB(0, 0, 255));
-//		}
-//	}
-//}
-////
+
+
+
 
 
 void CExplosiveObject::PrepareExplosion()
@@ -300,6 +265,51 @@ void CExplosiveObject::PrepareExplosion()
 
 	m_pExplosionMesh = new CCubeMesh(0.5f, 0.5f, 0.5f);
 }
+
+
+// 추가
+void CExplosiveObject::FireBullet()
+{
+	/*
+		if (pLockedObject)
+		{
+			LookAt(pLockedObject->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+			OnUpdateTransform();
+		}
+	*/
+
+	CBulletObject* pBulletObject = NULL;
+	
+	for (int i = 0; i < BULLETS; i++)
+	{
+		if (!m_ppBullets[i]->m_bActive)
+		{
+			pBulletObject = m_ppBullets[i];
+			break;
+		}
+	}
+
+	if (pBulletObject)
+	{
+		XMFLOAT3 xmf3Position = GetPosition();
+		XMFLOAT3 xmf3Direction = GetUp();
+		XMFLOAT3 xmf3FirePosition = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Direction, 6.0f, false));
+
+		pBulletObject->m_xmf4x4World = m_xmf4x4World;
+
+		pBulletObject->SetFirePosition(xmf3FirePosition);
+		pBulletObject->SetMovingDirection(xmf3Direction);
+		pBulletObject->SetColor(RGB(255, 0, 0));
+		pBulletObject->SetActive(true);
+
+		/*if (pLockedObject)
+		{
+			pBulletObject->m_pLockedObject = pLockedObject;
+			pBulletObject->SetColor(RGB(0, 0, 255));
+		}*/
+	}
+}
+
 
 void CExplosiveObject::Animate(float fElapsedTime)
 {
@@ -329,7 +339,13 @@ void CExplosiveObject::Animate(float fElapsedTime)
 	{
 		CRotatingObject::Animate(fElapsedTime);
 	}
+
+	// 추가
+	for (int i = 0; i < BULLETS; ++i)
+		if (m_ppBullets[i]->m_bActive)
+			m_ppBullets[i]->Animate(fElapsedTime);
 }
+
 
 void CExplosiveObject::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 {
@@ -344,7 +360,14 @@ void CExplosiveObject::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 	{
 		CGameObject::Render(hDCFrameBuffer, pCamera);
 	}
+
+	 //추가
+	for (int i = 0; i < BULLETS; ++i)
+		if (m_ppBullets[i]->m_bActive)
+			m_ppBullets[i]->Render(hDCFrameBuffer, pCamera);
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -355,6 +378,7 @@ CBulletObject::CBulletObject(float fEffectiveRange)
 
 CBulletObject::~CBulletObject()
 {
+	
 }
 
 void CBulletObject::SetFirePosition(XMFLOAT3 xmf3FirePosition)
@@ -431,7 +455,7 @@ void CBulletObject::Animate(float fElapsedTime)
 {
 	m_fElapsedTimeAfterFire += fElapsedTime;
 
-	float fDistance = m_fMovingSpeed * fElapsedTime;
+	float fDistance = m_fMovingSpeed * fElapsedTime * 0.001;
 
 	if ((m_fElapsedTimeAfterFire > m_fLockingDelayTime) && m_pLockedObject)
 	{
