@@ -3,6 +3,9 @@
 #include "Mesh.h"
 #include "Camera.h"
 
+// 추가
+#define BULLETS 50
+
 class CGameObject
 {
 public:
@@ -69,6 +72,8 @@ public:
 	int PickObjectByRayIntersection(XMVECTOR& xmPickPosition, XMMATRIX& xmmtxView, float* pfHitDistance);
 };
 
+
+
 class CRotatingObject : public CGameObject
 {
 public:
@@ -84,43 +89,6 @@ public:
 	virtual void Animate(float fElapsedTime);
 };
 
-class CExplosiveObject : public CRotatingObject
-{
-public:
-	CExplosiveObject();
-	virtual ~CExplosiveObject();
-
-	bool						m_bBlowingUp = false;
-
-	XMFLOAT4X4					m_pxmf4x4Transforms[EXPLOSION_DEBRISES];
-
-	float						m_fElapsedTimes = 0.0f;
-	float						m_fDuration = 2.0f;
-	float						m_fExplosionSpeed = 10.0f;
-	float						m_fExplosionRotation = 720.0f;
-
-	virtual void Animate(float fElapsedTime);
-	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
-
-public:
-	static CMesh*				m_pExplosionMesh;
-	static XMFLOAT3				m_pxmf3SphereVectors[EXPLOSION_DEBRISES];
-
-	static void PrepareExplosion();
-};
-
-class CWallsObject : public CGameObject
-{
-public:
-	CWallsObject();
-	virtual ~CWallsObject();
-
-public:
-	BoundingOrientedBox			m_xmOOBBPlayerMoveCheck = BoundingOrientedBox();
-	XMFLOAT4					m_pxmf4WallPlanes[6];
-
-	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
-};
 
 class CBulletObject : public CRotatingObject
 {
@@ -139,10 +107,56 @@ public:
 	float						m_fElapsedTimeAfterFire = 0.0f;
 	float						m_fLockingDelayTime = 0.3f;
 	float						m_fLockingTime = 4.0f;
-	CGameObject*				m_pLockedObject = NULL;
+	CGameObject* m_pLockedObject = NULL;
 
 	void SetFirePosition(XMFLOAT3 xmf3FirePosition);
 	void Reset();
+};
+
+
+class CExplosiveObject : public CRotatingObject
+{
+public:
+	CExplosiveObject();
+	virtual ~CExplosiveObject();
+
+	//CBulletObject* m_ppBullets[BULLETS];
+
+	bool						m_bBlowingUp = false;
+
+	XMFLOAT4X4					m_pxmf4x4Transforms[EXPLOSION_DEBRISES];
+
+	float						m_fElapsedTimes = 0.0f;
+	float						m_fDuration = 2.0f;
+	float						m_fExplosionSpeed = 10.0f;
+	float						m_fExplosionRotation = 720.0f;
+
+	// 추가
+
+	virtual void Animate(float fElapsedTime);
+	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
+	//void FireBullet(CGameObject* pLockedObject);
+
+public:
+	static CMesh*				m_pExplosionMesh;
+	static XMFLOAT3				m_pxmf3SphereVectors[EXPLOSION_DEBRISES];
+
+	static void PrepareExplosion();
+};
+
+
+
+class CWallsObject : public CGameObject
+{
+public:
+	CWallsObject();
+	virtual ~CWallsObject();
+
+public:
+	BoundingOrientedBox			m_xmOOBBPlayerMoveCheck = BoundingOrientedBox();
+	XMFLOAT4					m_pxmf4WallPlanes[6];
+
+	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 };
 
 class CAxisObject : public CGameObject
