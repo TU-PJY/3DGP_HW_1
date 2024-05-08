@@ -44,8 +44,8 @@ void CScene::BuildObjects()
 	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 1.0f));
 	pExplosiveObject->SetRotationSpeed(0.0f);
 	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 0.0f));
-	pExplosiveObject->SetMovingSpeed(6.5f);
-	pExplosiveObject->Rotate(90.0f, 180.0f);
+	pExplosiveObject->SetMovingSpeed(7.5f);
+	pExplosiveObject->Rotate(90.0f, 190.0f);
 	m_ppObjects[0] = pExplosiveObject;
 
 
@@ -310,6 +310,7 @@ void CScene::CheckObjectByWallCollisions()
 	}
 }
 
+
 void CScene::CheckPlayerByWallCollision()
 {
 	BoundingOrientedBox xmOOBBPlayerMoveCheck;
@@ -319,9 +320,11 @@ void CScene::CheckPlayerByWallCollision()
 	if (!xmOOBBPlayerMoveCheck.Intersects(m_pPlayer->m_xmOOBB)) m_pWallsObject->SetPosition(m_pPlayer->m_xmf3Position);
 }
 
+
 void CScene::CheckObjectByBulletCollisions()
 {
 	CBulletObject** ppBullets = ((CAirplanePlayer*)m_pPlayer)->m_ppBullets;
+
 
 	for (int i = 0; i < m_nObjects; i++)
 	{
@@ -331,7 +334,7 @@ void CScene::CheckObjectByBulletCollisions()
 			{
 				CExplosiveObject* pExplosiveObject = (CExplosiveObject*)m_ppObjects[i];
 
-				// 추가, 적기가 존재하지 않으면 충돌처리르 하지 않는다
+				// 추가, 적기가 존재하지 않으면 충돌처리를 하지 않는다
 				if (!pExplosiveObject->m_bBlowingUp) {
 					pExplosiveObject->m_bBlowingUp = true;
 					ppBullets[j]->Reset();
@@ -341,6 +344,27 @@ void CScene::CheckObjectByBulletCollisions()
 	}
 }
 
+
+// 추가
+void CScene::CheckPlayerByBulletCollisions()
+{
+
+
+
+	for (int i = 0; i < m_nObjects; ++i)
+	{
+	CBulletObject** ppBullets = ((CExplosiveObject*)m_ppObjects[i])->m_ppBullets;
+
+		for (int j = 0; j < BULLETS; j++)
+		{
+			if (ppBullets[j]->m_bActive && m_pPlayer->m_xmOOBB.Intersects(ppBullets[j]->m_xmOOBB))
+			{
+				//CAirplanePlayer* pExplosiveObject = ((CAirplanePlayer*)m_pPlayer);
+				ppBullets[j]->Reset();
+			}
+		}
+	}
+}
 
 
 void CScene::Animate(float fElapsedTime)
@@ -358,6 +382,8 @@ void CScene::Animate(float fElapsedTime)
 	CheckObjectByObjectCollisions();
 
 	CheckObjectByBulletCollisions();
+
+	CheckPlayerByBulletCollisions();
 	
 	// 추가
 
