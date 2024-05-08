@@ -171,7 +171,9 @@ void CAirplanePlayer::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 {
 	CPlayer::Render(hDCFrameBuffer, pCamera);
 
-	for (int i = 0; i < BULLETS; i++) if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Render(hDCFrameBuffer, pCamera);
+	for (int i = 0; i < BULLETS; i++) 
+		if (m_ppBullets[i]->m_bActive) 
+			m_ppBullets[i]->Render(hDCFrameBuffer, pCamera);
 }
 
 void CAirplanePlayer::FireBullet(CGameObject* pLockedObject)
@@ -213,4 +215,25 @@ void CAirplanePlayer::FireBullet(CGameObject* pLockedObject)
 			pBulletObject->SetColor(RGB(0, 0, 255));
 		}
 	}
+}
+
+Shield::Shield() {}
+Shield::~Shield() {}
+
+
+void Shield::Animate(float fElapsedTime)
+{
+	CPlayer::Animate(fElapsedTime);
+}
+
+void Shield::OnUpdateTransform()
+{
+	CPlayer::OnUpdateTransform();
+
+	m_xmf4x4World = Matrix4x4::Multiply(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.0f), 0.0f, 0.0f), m_xmf4x4World);
+}
+
+void Shield::Render(HDC hDCFrameBuffer, CCamera* pCamera)
+{
+	CPlayer::Render(hDCFrameBuffer, pCamera);
 }

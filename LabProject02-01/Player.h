@@ -68,3 +68,13 @@ public:
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 };
 
+
+class Shield : public CPlayer {
+public:
+	Shield();
+	virtual ~Shield();
+
+	virtual void OnUpdateTransform();
+	virtual void Animate(float fElapsedTime);
+	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
+};
