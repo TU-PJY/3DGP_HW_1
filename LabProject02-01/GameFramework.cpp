@@ -72,8 +72,10 @@ void CGameFramework::BuildObjects()
 
 	CAirplaneMesh* pAirplaneMesh = new CAirplaneMesh(6.0f, 6.0f, 1.0f);
 
+
 	// Ãß°¡
 	CCubeMesh* pShieldMesh = new CCubeMesh(4.0, 4.0, 4.0);
+
 
 	m_pPlayer = new CAirplanePlayer();
 	m_pPlayer->SetPosition(0.0f, 0.0f, 0.0f);

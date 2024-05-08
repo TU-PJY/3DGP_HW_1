@@ -26,6 +26,8 @@ private:
 #endif
 
 public:
+	double delay{};
+
 	virtual void BuildObjects();
 	virtual void ReleaseObjects();
 

@@ -239,7 +239,7 @@ CExplosiveObject::CExplosiveObject()
 		m_ppBullets[i]->SetMesh(pBulletMesh);
 		m_ppBullets[i]->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 0.0f));
 		m_ppBullets[i]->SetRotationSpeed(360.0f);
-		m_ppBullets[i]->SetMovingSpeed(120.0f);
+		m_ppBullets[i]->SetMovingSpeed(50.0f);
 		m_ppBullets[i]->SetActive(false);
 	}
 }
@@ -268,18 +268,19 @@ void CExplosiveObject::PrepareExplosion()
 
 
 // 추가
-void CExplosiveObject::FireBullet()
+void CExplosiveObject::FireBullet(CGameObject* pLockedObject)
 {
-	/*
+	
 		if (pLockedObject)
 		{
 			LookAt(pLockedObject->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 			OnUpdateTransform();
 		}
-	*/
+	
 
 	CBulletObject* pBulletObject = NULL;
 	
+	// 추가
 	if (!m_bBlowingUp) {
 		for (int i = 0; i < BULLETS; i++)
 		{
@@ -304,11 +305,11 @@ void CExplosiveObject::FireBullet()
 		pBulletObject->SetColor(RGB(255, 0, 0));
 		pBulletObject->SetActive(true);
 
-		/*if (pLockedObject)
+		if (pLockedObject)
 		{
 			pBulletObject->m_pLockedObject = pLockedObject;
 			pBulletObject->SetColor(RGB(0, 0, 255));
-		}*/
+		}
 	}
 }
 

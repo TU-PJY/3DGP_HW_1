@@ -44,7 +44,7 @@ void CScene::BuildObjects()
 	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 1.0f));
 	pExplosiveObject->SetRotationSpeed(0.0f);
 	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 0.0f));
-	pExplosiveObject->SetMovingSpeed(10.5f);
+	pExplosiveObject->SetMovingSpeed(6.5f);
 	pExplosiveObject->Rotate(90.0f, 180.0f);
 	m_ppObjects[0] = pExplosiveObject;
 
@@ -322,6 +322,7 @@ void CScene::CheckPlayerByWallCollision()
 void CScene::CheckObjectByBulletCollisions()
 {
 	CBulletObject** ppBullets = ((CAirplanePlayer*)m_pPlayer)->m_ppBullets;
+
 	for (int i = 0; i < m_nObjects; i++)
 	{
 		for (int j = 0; j < BULLETS; j++)
@@ -341,8 +342,6 @@ void CScene::CheckObjectByBulletCollisions()
 }
 
 
-//추가
-double delay;
 
 void CScene::Animate(float fElapsedTime)
 {
@@ -363,10 +362,13 @@ void CScene::Animate(float fElapsedTime)
 	// 추가
 
 	for (int i = 0; i < m_nObjects; i++) {
-		delay += fElapsedTime * 100;
-		if (delay > 40) {
-			((CExplosiveObject*)m_ppObjects[i])->FireBullet();
-			delay = 0;
+		((CExplosiveObject*)m_ppObjects[i])->delay += fElapsedTime * 100;
+
+		if (((CExplosiveObject*)m_ppObjects[i])->delay > 60) {
+
+			((CExplosiveObject*)m_ppObjects[i])->FireBullet(NULL);
+
+			((CExplosiveObject*)m_ppObjects[i])->delay = 0;
 		}
 	}
 }

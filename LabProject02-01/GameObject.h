@@ -124,6 +124,8 @@ public:
 	CExplosiveObject();
 	virtual ~CExplosiveObject();
 
+	double delay{};
+
 
 	bool						m_bBlowingUp = false;
 
@@ -144,7 +146,7 @@ public:
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 
 	// Ãß°¡
-	void FireBullet();
+	void FireBullet(CGameObject* pLockedObject);
 
 public:
 	static CMesh*				m_pExplosionMesh;
