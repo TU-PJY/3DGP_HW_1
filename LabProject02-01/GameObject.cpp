@@ -280,12 +280,14 @@ void CExplosiveObject::FireBullet()
 
 	CBulletObject* pBulletObject = NULL;
 	
-	for (int i = 0; i < BULLETS; i++)
-	{
-		if (!m_ppBullets[i]->m_bActive)
+	if (!m_bBlowingUp) {
+		for (int i = 0; i < BULLETS; i++)
 		{
-			pBulletObject = m_ppBullets[i];
-			break;
+			if (!m_ppBullets[i]->m_bActive)
+			{
+				pBulletObject = m_ppBullets[i];
+				break;
+			}
 		}
 	}
 
@@ -340,10 +342,12 @@ void CExplosiveObject::Animate(float fElapsedTime)
 		CRotatingObject::Animate(fElapsedTime);
 	}
 
-	// 추가
-	for (int i = 0; i < BULLETS; ++i)
-		if (m_ppBullets[i]->m_bActive)
-			m_ppBullets[i]->Animate(fElapsedTime);
+		// 추가
+	if (!m_bBlowingUp) {
+		for (int i = 0; i < BULLETS; ++i)
+			if (m_ppBullets[i]->m_bActive)
+				m_ppBullets[i]->Animate(fElapsedTime);
+	}
 }
 
 
@@ -362,9 +366,11 @@ void CExplosiveObject::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 	}
 
 	 //추가
-	for (int i = 0; i < BULLETS; ++i)
-		if (m_ppBullets[i]->m_bActive)
-			m_ppBullets[i]->Render(hDCFrameBuffer, pCamera);
+	if (!m_bBlowingUp) {
+		for (int i = 0; i < BULLETS; ++i)
+			if (m_ppBullets[i]->m_bActive)
+				m_ppBullets[i]->Render(hDCFrameBuffer, pCamera);
+	}
 }
 
 

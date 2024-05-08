@@ -14,6 +14,9 @@ private:
 	int							m_nObjects = 0;
 	CGameObject					**m_ppObjects = NULL;
 
+	//Ãß°¡
+	CGameObject*               m_shieldObject = NULL;
+
 	CWallsObject*				m_pWallsObject = NULL;
 
 	CPlayer*					m_pPlayer = NULL;

@@ -48,6 +48,7 @@ void CScene::BuildObjects()
 	pExplosiveObject->Rotate(90.0f, 180.0f);
 	m_ppObjects[0] = pExplosiveObject;
 
+
 	/*pExplosiveObject = new CExplosiveObject();
 	pExplosiveObject->SetMesh(pCubeMesh);
 	pExplosiveObject->SetColor(RGB(0, 0, 255));
@@ -328,8 +329,12 @@ void CScene::CheckObjectByBulletCollisions()
 			if (ppBullets[j]->m_bActive && m_ppObjects[i]->m_xmOOBB.Intersects(ppBullets[j]->m_xmOOBB))
 			{
 				CExplosiveObject* pExplosiveObject = (CExplosiveObject*)m_ppObjects[i];
-				pExplosiveObject->m_bBlowingUp = true;
-				ppBullets[j]->Reset();
+
+				// 추가, 적기가 존재하지 않으면 충돌처리르 하지 않는다
+				if (!pExplosiveObject->m_bBlowingUp) {
+					pExplosiveObject->m_bBlowingUp = true;
+					ppBullets[j]->Reset();
+				}
 			}
 		}
 	}
@@ -343,6 +348,7 @@ void CScene::Animate(float fElapsedTime)
 {
 	m_pWallsObject->Animate(fElapsedTime);
 
+	// 추가
 	for (int i = 0; i < m_nObjects; i++) 
 		m_ppObjects[i]->Animate(fElapsedTime);
 
@@ -355,6 +361,7 @@ void CScene::Animate(float fElapsedTime)
 	CheckObjectByBulletCollisions();
 	
 	// 추가
+
 	for (int i = 0; i < m_nObjects; i++) {
 		delay += fElapsedTime * 100;
 		if (delay > 40) {
