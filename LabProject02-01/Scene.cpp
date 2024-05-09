@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "GraphicsPipeline.h"
+#include "Timer.h"
 #include <array>
 
 CScene::CScene(CPlayer* pPlayer)
@@ -67,7 +68,7 @@ void CScene::BuildObjects()
 
 
 	// 추가
-	CCubeMesh* cShieldMesh= new CCubeMesh(4.0, 4.0, 4.0);
+	CCubeMesh* cShieldMesh= new CCubeMesh(6.0, 6.0, 6.0);
 
 	m_pShield = new CShield;
 	m_pShield->SetMesh(cShieldMesh);
@@ -616,8 +617,6 @@ void CScene::Animate(float fElapsedTime)
 	}
 }
 
-
-
 void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 {
 	CGraphicsPipeline::SetViewport(&pCamera->m_Viewport);
@@ -636,11 +635,9 @@ void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 			m_pShield->Render(hDCFrameBuffer, pCamera);
 	}
 
-
 	// 추가
-	for(int i = 0; i < m_nVoxels; ++ i)
+	for (int i = 0; i < m_nVoxels; ++i) 
 		m_pVoxel[i]->Render(hDCFrameBuffer, pCamera);
-
 
 //UI
 #ifdef _WITH_DRAW_AXIS
