@@ -34,30 +34,33 @@ void CScene::BuildObjects()
 	// Ãß°¡
 	CAirplaneMesh* pCubeMesh = new CAirplaneMesh(6.0f, 6.0f, 1.0f);
 
-	m_nObjects = 1;
+	m_nObjects = 2;
 	m_ppObjects = new CGameObject * [m_nObjects];
 
 	CExplosiveObject *pExplosiveObject = new CExplosiveObject();
 	pExplosiveObject->SetMesh(pCubeMesh);
 	pExplosiveObject->SetColor(RGB(255, 0, 0));
-	pExplosiveObject->SetPosition(0.0f, 0.0f, 30.0f);
+	pExplosiveObject->SetPosition(30.0f, 0.0f, 30.0f);
 	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 1.0f));
 	pExplosiveObject->SetRotationSpeed(0.0f);
 	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 0.0f));
-	pExplosiveObject->SetMovingSpeed(7.5f);
+	pExplosiveObject->SetMovingSpeed(10.5f);
 	pExplosiveObject->Rotate(90.0f, 190.0f);
 	m_ppObjects[0] = pExplosiveObject;
 
 
-	/*pExplosiveObject = new CExplosiveObject();
+	pExplosiveObject = new CExplosiveObject();
 	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(0, 0, 255));
-	pExplosiveObject->SetPosition(+13.5f, 0.0f, -14.0f);
+	pExplosiveObject->SetColor(RGB(255, 0, 0));
+	pExplosiveObject->SetPosition(-30.0f, -10.0f, 30.0f);
 	pExplosiveObject->SetRotationAxis(XMFLOAT3(1.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(180.0f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(-1.0f, 0.0f, 0.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
+	pExplosiveObject->SetRotationSpeed(0.0f);
+	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 0.0f));
+	pExplosiveObject->SetMovingSpeed(10.5f);
+	pExplosiveObject->Rotate(90.0f, 190.0f);
 	m_ppObjects[1] = pExplosiveObject;
+
+	/*
 
 	pExplosiveObject = new CExplosiveObject();
 	pExplosiveObject->SetMesh(pCubeMesh);
@@ -359,7 +362,7 @@ void CScene::CheckPlayerByBulletCollisions()
 		{
 			if (ppBullets[j]->m_bActive && m_pPlayer->m_xmOOBB.Intersects(ppBullets[j]->m_xmOOBB))
 			{
-				//CAirplanePlayer* pExplosiveObject = ((CAirplanePlayer*)m_pPlayer);
+
 				ppBullets[j]->Reset();
 			}
 		}
@@ -392,7 +395,7 @@ void CScene::Animate(float fElapsedTime)
 
 		if (((CExplosiveObject*)m_ppObjects[i])->delay > 60) {
 
-			((CExplosiveObject*)m_ppObjects[i])->FireBullet(NULL);
+			((CExplosiveObject*)m_ppObjects[i])->FireBullet(m_pPlayer);
 
 			((CExplosiveObject*)m_ppObjects[i])->delay = 0;
 		}
