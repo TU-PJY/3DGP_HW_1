@@ -15,7 +15,7 @@ private:
 	CGameObject					**m_ppObjects = NULL;
 
 	//Ãß°¡
-	CGameObject*               m_shieldObject = NULL;
+	CShield*					m_pShield = NULL;
 
 	CWallsObject*				m_pWallsObject = NULL;
 

@@ -32,17 +32,15 @@ void CScene::BuildObjects()
 
 
 	// 추가
-	CAirplaneMesh* pCubeMesh = new CAirplaneMesh(6.0f, 6.0f, 1.0f);
+	CAirplaneMesh* pAirplaneMesh = new CAirplaneMesh(6.0f, 6.0f, 1.0f);
 
 	m_nObjects = 2;
 	m_ppObjects = new CGameObject * [m_nObjects];
 
 	CExplosiveObject *pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
+	pExplosiveObject->SetMesh(pAirplaneMesh);
 	pExplosiveObject->SetColor(RGB(255, 0, 0));
 	pExplosiveObject->SetPosition(30.0f, 0.0f, 30.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 1.0f));
-	pExplosiveObject->SetRotationSpeed(0.0f);
 	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 0.0f));
 	pExplosiveObject->SetMovingSpeed(10.5f);
 	pExplosiveObject->Rotate(90.0f, 190.0f);
@@ -50,15 +48,22 @@ void CScene::BuildObjects()
 
 
 	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
+	pExplosiveObject->SetMesh(pAirplaneMesh);
 	pExplosiveObject->SetColor(RGB(255, 0, 0));
 	pExplosiveObject->SetPosition(-30.0f, -10.0f, 30.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(1.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(0.0f);
 	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 0.0f));
 	pExplosiveObject->SetMovingSpeed(10.5f);
 	pExplosiveObject->Rotate(90.0f, 190.0f);
 	m_ppObjects[1] = pExplosiveObject;
+
+
+	// 추가
+	CCubeMesh* cShieldMesh= new CCubeMesh(4.0, 4.0, 4.0);
+
+	m_pShield = new CShield;
+	m_pShield->SetMesh(cShieldMesh);
+	m_pShield->SetColor(RGB(0, 255, 0));
+	m_pShield->SetPosition(0.0, 0.0, 0.0);
 
 	/*
 
@@ -351,9 +356,6 @@ void CScene::CheckObjectByBulletCollisions()
 // 추가
 void CScene::CheckPlayerByBulletCollisions()
 {
-
-
-
 	for (int i = 0; i < m_nObjects; ++i)
 	{
 	CBulletObject** ppBullets = ((CExplosiveObject*)m_ppObjects[i])->m_ppBullets;
@@ -362,6 +364,22 @@ void CScene::CheckPlayerByBulletCollisions()
 		{
 			if (ppBullets[j]->m_bActive && m_pPlayer->m_xmOOBB.Intersects(ppBullets[j]->m_xmOOBB))
 			{
+				// 쉴드가 활성화 된 상태에서는 쉴드의 체력이 5 떨어지고, 그렇지 않다면 플레이어의 체력이 5 떨어진다
+				if (m_pPlayer->shield_state) {
+					if(m_pShield->shield_hp > 0)
+						m_pShield->shield_hp -= 10;
+
+					// 쉴드의 체력이 완전히 떨어지면 쉴드 상태가 해제된다.
+					if (m_pShield->shield_hp <= 0) {
+						m_pShield->shield_hp = 0;
+						m_pPlayer->shield_state = false;
+					}
+				}
+
+				if (!m_pPlayer->shield_state) {
+					if (m_pPlayer->player_hp > 5)
+						m_pPlayer->player_hp -= 10;
+				}
 
 				ppBullets[j]->Reset();
 			}
@@ -378,6 +396,14 @@ void CScene::Animate(float fElapsedTime)
 	for (int i = 0; i < m_nObjects; i++) 
 		m_ppObjects[i]->Animate(fElapsedTime);
 
+	// 추가
+	XMFLOAT3 player_position = m_pPlayer->GetPosition();
+	m_pShield->SetPosition(player_position.x, player_position.y, player_position.z);
+	m_pShield->SetColor(RGB(255 - m_pShield->shield_hp, m_pShield->shield_hp, 0.0));
+
+	// 추가
+	m_pShield->Animate(fElapsedTime);
+	
 	CheckPlayerByWallCollision();
 
 	CheckObjectByWallCollisions();
@@ -386,9 +412,9 @@ void CScene::Animate(float fElapsedTime)
 
 	CheckObjectByBulletCollisions();
 
+	// 추가
 	CheckPlayerByBulletCollisions();
 	
-	// 추가
 
 	for (int i = 0; i < m_nObjects; i++) {
 		((CExplosiveObject*)m_ppObjects[i])->delay += fElapsedTime * 100;
@@ -414,6 +440,11 @@ void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 	for (int i = 0; i < m_nObjects; i++) m_ppObjects[i]->Render(hDCFrameBuffer, pCamera);
 
 	if (m_pPlayer) m_pPlayer->Render(hDCFrameBuffer, pCamera);
+
+	// 추가
+	// 쉴드 상태일 때만 쉴드가 렌더링된다
+	if (m_pPlayer->shield_state) 
+		m_pShield->Render(hDCFrameBuffer, pCamera);
 
 //UI
 #ifdef _WITH_DRAW_AXIS

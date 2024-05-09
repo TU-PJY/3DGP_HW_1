@@ -73,10 +73,6 @@ void CGameFramework::BuildObjects()
 	CAirplaneMesh* pAirplaneMesh = new CAirplaneMesh(6.0f, 6.0f, 1.0f);
 
 
-	// 추가
-	CCubeMesh* pShieldMesh = new CCubeMesh(4.0, 4.0, 4.0);
-
-
 	m_pPlayer = new CAirplanePlayer();
 	m_pPlayer->SetPosition(0.0f, 0.0f, 0.0f);
 	m_pPlayer->SetMesh(pAirplaneMesh);
@@ -86,9 +82,6 @@ void CGameFramework::BuildObjects()
 
 	m_pScene = new CScene(m_pPlayer);
 	m_pScene->BuildObjects();
-
-
-
 }
 
 void CGameFramework::ReleaseObjects()
@@ -147,6 +140,19 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			((CAirplanePlayer*)m_pPlayer)->FireBullet(m_pLockedObject);
 			m_pLockedObject = NULL;
 			break;
+		
+		// 추가
+		// z키 토글을 통해 쉴드를 키고 끈다
+		case 'Z':
+			if (!m_pPlayer->shield_state) {
+				m_pPlayer->shield_state = true;
+				break;
+			}
+			else
+				m_pPlayer->shield_state = false;
+
+			break;
+
 		default:
 			m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 			break;
