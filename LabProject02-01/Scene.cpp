@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "GraphicsPipeline.h"
+#include <array>
 
 CScene::CScene(CPlayer* pPlayer)
 {
@@ -9,6 +10,14 @@ CScene::CScene(CPlayer* pPlayer)
 
 CScene::~CScene()
 {
+}
+
+void make_voxel(CCubeMesh* mesh, CGameObject** obj, int num, float x, float y) {
+	CVoxel* pVoxel = new CVoxel();
+	pVoxel->SetMesh(mesh);
+	pVoxel->SetColor(RGB(255, 0, 255));
+	pVoxel->SetPosition(x, y, 40.0f);
+	obj[num] = pVoxel;
 }
 
 void CScene::BuildObjects()
@@ -65,87 +74,104 @@ void CScene::BuildObjects()
 	m_pShield->SetColor(RGB(0, 255, 0));
 	m_pShield->SetPosition(0.0, 0.0, 0.0);
 
-	/*
+	// 추가
+	CCubeMesh* cVoxelMesh = new CCubeMesh(1.0, 1.0, 1.0);
+	m_nVoxels = 30;
+	m_pVoxel = new CGameObject * [m_nVoxels];
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(0, 255, 0));
-	pExplosiveObject->SetPosition(0.0f, +5.0f, 20.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(1.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(30.15f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, -1.0f, 0.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[2] = pExplosiveObject;
+	// 3d 메뉴 생성용 위치 배열
+	std::array<float, 30> x_list = {
+		///// S
+		-20.0,
+		-19.0,
+		-18.0,
+		-17.0,
+		//
+		-20.0,
+		-20.0,
+		-20.0,
+		-20.0,
+		//
+		-19.0,
+		-18.0,
+		-17.0,
+		//
+		-17.0,
+		-17.0,
+		-17.0,
+		//
+		-18.0,
+		-19.0,
+		-20.0,
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(0, 255, 255));
-	pExplosiveObject->SetPosition(0.0f, 0.0f, 0.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 1.0f));
-	pExplosiveObject->SetRotationSpeed(40.6f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(0.0f, 0.0f, 1.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[3] = pExplosiveObject;
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(128, 0, 255));
-	pExplosiveObject->SetPosition(10.0f, 0.0f, 0.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(50.06f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(0.0f, 1.0f, 1.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[4] = pExplosiveObject;
+		///// T
+		-15.0,
+		-14.0,
+		-13.0,
+		//
+		-14.0,
+		-14.0,
+		-14.0,
+		-14.0,
+		-14.0,
+		-14.0,
+		
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(255, 0, 255));
-	pExplosiveObject->SetPosition(-10.0f, 0.0f, -10.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(60.06f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 1.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[5] = pExplosiveObject;
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+	};
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(255, 0, 255));
-	pExplosiveObject->SetPosition(-10.0f, 10.0f, -10.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(60.06f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(1.0f, 1.0f, 1.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[6] = pExplosiveObject;
+	std::array<float, 30> y_list = { 
+		///// S
+		15.0,
+		15.0,
+		15.0,
+		15.0,
+		//
+		14.0,
+		13.0,
+		12.0,
+		//
+		12.0,
+		12.0,
+		12.0,
+		12.0,
+		//
+		11.0,
+		10.0,
+		9.0,
+		//
+		9.0,
+		9.0,
+		9.0,
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(255, 0, 128));
-	pExplosiveObject->SetPosition(-10.0f, 10.0f, -20.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(70.06f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(-1.0f, 1.0f, 1.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[7] = pExplosiveObject;
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(128, 0, 255));
-	pExplosiveObject->SetPosition(-15.0f, 10.0f, -30.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(1.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(90.06f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(0.0f, 0.0f, -1.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[8] = pExplosiveObject;
+		///// T
+		15.0,
+		15.0,
+		15.0,
+		//
+		14.0,
+		13.0,
+		12.0,
+		11.0,
+		10.0,
+		9.0,
 
-	pExplosiveObject = new CExplosiveObject();
-	pExplosiveObject->SetMesh(pCubeMesh);
-	pExplosiveObject->SetColor(RGB(255, 64, 64));
-	pExplosiveObject->SetPosition(+15.0f, 10.0f, 0.0f);
-	pExplosiveObject->SetRotationAxis(XMFLOAT3(1.0f, 1.0f, 0.0f));
-	pExplosiveObject->SetRotationSpeed(90.06f);
-	pExplosiveObject->SetMovingDirection(XMFLOAT3(-0.0f, 0.0f, -1.0f));
-	pExplosiveObject->SetMovingSpeed(120.0f);
-	m_ppObjects[9] = pExplosiveObject;*/
+
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+	};
+
+	//추가, x_list, y_list에 저장된 위치에 작은 복셀을 생성한다
+	for (int i = 0; i < m_nVoxels; ++i)
+		make_voxel(cVoxelMesh, m_pVoxel, i, x_list[i], y_list[i]);
+
 
 #ifdef _WITH_DRAW_AXIS
 	m_pWorldAxis = new CGameObject();
@@ -401,8 +427,6 @@ void CScene::Animate(float fElapsedTime)
 	m_pShield->SetPosition(player_position.x, player_position.y, player_position.z);
 	m_pShield->SetColor(RGB(255 - m_pShield->shield_hp, m_pShield->shield_hp, 0.0));
 
-	// 추가
-	m_pShield->Animate(fElapsedTime);
 	
 	CheckPlayerByWallCollision();
 
@@ -447,6 +471,11 @@ void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 		if(m_pPlayer->shield_state)
 			m_pShield->Render(hDCFrameBuffer, pCamera);
 	}
+
+
+	// 추가
+	for(int i = 0; i < m_nVoxels; ++ i)
+		m_pVoxel[i]->Render(hDCFrameBuffer, pCamera);
 
 
 //UI

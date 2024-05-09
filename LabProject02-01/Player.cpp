@@ -237,21 +237,6 @@ void CShield::SetPosition(float x, float y, float z)
 
 
 
-void CShield::Animate(float fElapsedTime)
-{
-	OnUpdateTransform();
-
-	CGameObject::Animate(fElapsedTime);
-}
-
-void CShield::OnUpdateTransform()
-{
-	m_xmf4x4World._11 = m_xmf3Right.x; m_xmf4x4World._12 = m_xmf3Right.y; m_xmf4x4World._13 = m_xmf3Right.z;
-	m_xmf4x4World._21 = m_xmf3Up.x; m_xmf4x4World._22 = m_xmf3Up.y; m_xmf4x4World._23 = m_xmf3Up.z;
-	m_xmf4x4World._31 = m_xmf3Look.x; m_xmf4x4World._32 = m_xmf3Look.y; m_xmf4x4World._33 = m_xmf3Look.z;
-	m_xmf4x4World._41 = m_xmf3Position.x; m_xmf4x4World._42 = m_xmf3Position.y; m_xmf4x4World._43 = m_xmf3Position.z;
-}
-
 void CShield::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 {
 	CGameObject::Render(hDCFrameBuffer, pCamera);
@@ -259,3 +244,25 @@ void CShield::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //
+
+CVoxel::CVoxel()
+{
+}
+
+CVoxel::~CVoxel()
+{
+	if (m_pCamera) delete m_pCamera;
+}
+
+void CVoxel::SetPosition(float x, float y, float z)
+{
+	m_xmf3Position = XMFLOAT3(x, y, z);
+
+	CGameObject::SetPosition(x, y, z);
+}
+
+
+void CVoxel::Render(HDC hDCFrameBuffer, CCamera* pCamera)
+{
+	CGameObject::Render(hDCFrameBuffer, pCamera);
+}

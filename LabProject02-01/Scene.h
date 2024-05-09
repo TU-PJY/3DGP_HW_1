@@ -21,6 +21,10 @@ private:
 
 	CPlayer*					m_pPlayer = NULL;
 
+	// Ãß°¡
+	int m_nVoxels = 0;
+	CGameObject                **m_pVoxel = NULL;
+
 #ifdef _WITH_DRAW_AXIS
 	CGameObject*				m_pWorldAxis = NULL;
 #endif

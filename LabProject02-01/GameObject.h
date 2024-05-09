@@ -182,3 +182,26 @@ public:
 
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 };
+
+
+// Ãß°¡
+class CVoxel : public CGameObject
+{
+public:
+	CVoxel();
+	virtual ~CVoxel();
+
+public:
+	XMFLOAT3					m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3					m_xmf3Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	XMFLOAT3					m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	XMFLOAT3					m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+
+	CCamera* m_pCamera = NULL;
+
+public:
+	void SetPosition(float x, float y, float z);
+	void SetRotation(float x, float y, float z);
+
+	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
+};
