@@ -26,6 +26,7 @@ public:
 
 	// Ãß°¡
 	bool shield_state = true;
+	bool shield_available = true;
 	int player_hp = 255;
 
 	CCamera*					m_pCamera = NULL;

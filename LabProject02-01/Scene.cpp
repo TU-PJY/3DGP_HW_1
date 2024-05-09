@@ -371,8 +371,8 @@ void CScene::CheckPlayerByBulletCollisions()
 
 					// 쉴드의 체력이 완전히 떨어지면 쉴드 상태가 해제된다.
 					if (m_pShield->shield_hp <= 0) {
-						m_pShield->shield_hp = 0;
 						m_pPlayer->shield_state = false;
+						m_pPlayer->shield_available = false;  // 더 이상 쉴드를 사용할 수 없게 된다
 					}
 				}
 
@@ -415,7 +415,7 @@ void CScene::Animate(float fElapsedTime)
 	// 추가
 	CheckPlayerByBulletCollisions();
 	
-
+	// 추가
 	for (int i = 0; i < m_nObjects; i++) {
 		((CExplosiveObject*)m_ppObjects[i])->delay += fElapsedTime * 100;
 
@@ -439,12 +439,15 @@ void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 
 	for (int i = 0; i < m_nObjects; i++) m_ppObjects[i]->Render(hDCFrameBuffer, pCamera);
 
-	if (m_pPlayer) m_pPlayer->Render(hDCFrameBuffer, pCamera);
+	if (m_pPlayer) {
+		m_pPlayer->Render(hDCFrameBuffer, pCamera);
 
-	// 추가
-	// 쉴드 상태일 때만 쉴드가 렌더링된다
-	if (m_pPlayer->shield_state) 
-		m_pShield->Render(hDCFrameBuffer, pCamera);
+		// 추가
+		// 플레이어의 쉴드가 활성화 되어있을때만 렌더링 한다
+		if(m_pPlayer->shield_state)
+			m_pShield->Render(hDCFrameBuffer, pCamera);
+	}
+
 
 //UI
 #ifdef _WITH_DRAW_AXIS

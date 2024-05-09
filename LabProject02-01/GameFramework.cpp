@@ -144,10 +144,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		// 추가
 		// z키 토글을 통해 쉴드를 키고 끈다
 		case 'Z':
-			if (!m_pPlayer->shield_state) {
+			// 쉴드 사용이 가능할 때만 쉴드를 킬 수 있다.
+			if (!m_pPlayer->shield_state && m_pPlayer->shield_available) {
 				m_pPlayer->shield_state = true;
 				break;
 			}
+
 			else
 				m_pPlayer->shield_state = false;
 
