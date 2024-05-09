@@ -236,33 +236,10 @@ void CShield::SetPosition(float x, float y, float z)
 }
 
 
-
 void CShield::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 {
 	CGameObject::Render(hDCFrameBuffer, pCamera);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-//
-
-CVoxel::CVoxel()
-{
-}
-
-CVoxel::~CVoxel()
-{
-	if (m_pCamera) delete m_pCamera;
-}
-
-void CVoxel::SetPosition(float x, float y, float z)
-{
-	m_xmf3Position = XMFLOAT3(x, y, z);
-
-	CGameObject::SetPosition(x, y, z);
-}
 
 
-void CVoxel::Render(HDC hDCFrameBuffer, CCamera* pCamera)
-{
-	CGameObject::Render(hDCFrameBuffer, pCamera);
-}

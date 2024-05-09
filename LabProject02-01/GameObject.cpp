@@ -247,15 +247,10 @@ CExplosiveObject::CExplosiveObject()
 // 추가
 CExplosiveObject::~CExplosiveObject()
 {
-
 	for (int i = 0; i < BULLETS; ++i)
 		if (m_ppBullets[i])
 			delete m_ppBullets[i];
 }
-
-
-
-
 
 
 
@@ -270,12 +265,11 @@ void CExplosiveObject::PrepareExplosion()
 // 추가
 void CExplosiveObject::FireBullet(CGameObject* pLockedObject)
 {
-	
-		if (pLockedObject)
-		{
-			//LookAt(pLockedObject->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
-			//OnUpdateTransform();
-		}
+	if (pLockedObject)
+	{
+		//LookAt(pLockedObject->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+		//OnUpdateTransform();
+	}
 	
 
 	CBulletObject* pBulletObject = NULL;
@@ -519,3 +513,26 @@ void CAxisObject::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 	m_pMesh->Render(hDCFrameBuffer);
 }
 
+
+
+CVoxel::CVoxel()
+{
+}
+
+CVoxel::~CVoxel()
+{
+	if (m_pCamera) delete m_pCamera;
+}
+
+void CVoxel::SetPosition(float x, float y, float z)
+{
+	m_xmf3Position = XMFLOAT3(x, y, z);
+
+	CGameObject::SetPosition(x, y, z);
+}
+
+
+void CVoxel::Render(HDC hDCFrameBuffer, CCamera* pCamera)
+{
+	CGameObject::Render(hDCFrameBuffer, pCamera);
+}

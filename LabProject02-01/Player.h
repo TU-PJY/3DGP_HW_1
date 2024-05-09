@@ -29,6 +29,8 @@ public:
 	bool shield_available = true;
 	int player_hp = 255;
 
+	bool game_start{};
+
 	CCamera*					m_pCamera = NULL;
 
 public:

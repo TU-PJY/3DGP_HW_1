@@ -144,6 +144,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		// 추가
 		// z키 토글을 통해 쉴드를 키고 끈다
 		case 'Z':
+			// 게임을 시작하지 않았다면 쉴드 기능이 작동하지 않는다
+			if (!m_pPlayer->game_start)
+				break;
+
 			// 쉴드 사용이 가능할 때만 쉴드를 킬 수 있다.
 			if (!m_pPlayer->shield_state && m_pPlayer->shield_available) {
 				m_pPlayer->shield_state = true;
@@ -154,6 +158,13 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_pPlayer->shield_state = false;
 
 			break;
+
+			// 게임 시작
+		case VK_SPACE:
+			if (!m_pPlayer->game_start)
+				m_pPlayer->game_start = true;
+			break;
+
 
 		default:
 			m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);

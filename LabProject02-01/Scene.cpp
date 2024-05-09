@@ -514,7 +514,7 @@ void CScene::CheckPlayerByBulletCollisions()
 		{
 			if (ppBullets[j]->m_bActive && m_pPlayer->m_xmOOBB.Intersects(ppBullets[j]->m_xmOOBB))
 			{
-				// 쉴드가 활성화 된 상태에서는 쉴드의 체력이 5 떨어지고, 그렇지 않다면 플레이어의 체력이 5 떨어진다
+				// 쉴드가 활성화 된 상태에서는 쉴드의 체력이 10 떨어지고, 그렇지 않다면 플레이어의 체력이 10 떨어진다
 				if (m_pPlayer->shield_state) {
 					if(m_pShield->shield_hp > 0)
 						m_pShield->shield_hp -= 10;
@@ -527,8 +527,26 @@ void CScene::CheckPlayerByBulletCollisions()
 				}
 
 				if (!m_pPlayer->shield_state) {
-					if (m_pPlayer->player_hp > 5)
+					if (m_pPlayer->player_hp > 0) {
 						m_pPlayer->player_hp -= 10;
+						m_pPlayer->SetColor(RGB(0.0, 0.0, m_pPlayer->player_hp));
+					}
+
+					// 플레이어가 죽으면 게임 오버되어 초기 위치로 되돌아 간다.
+					if (m_pPlayer->player_hp <= 0) {
+						m_pPlayer->player_hp = 255;
+						m_pShield->shield_hp = 255;
+
+						m_pPlayer->shield_available = true;
+						m_pPlayer->shield_state = true;
+
+						m_pPlayer->game_start = false;
+
+						m_pPlayer->SetPosition(0.0, 0.0, 0.0);
+
+						for(int i = 0; i < BULLETS; ++i)
+							ppBullets[i]->Reset();
+					}
 				}
 
 				ppBullets[j]->Reset();
@@ -543,8 +561,9 @@ void CScene::Animate(float fElapsedTime)
 	m_pWallsObject->Animate(fElapsedTime);
 
 	// 추가
-	for (int i = 0; i < m_nObjects; i++) 
-		m_ppObjects[i]->Animate(fElapsedTime);
+	if (m_pPlayer->game_start)
+		for (int i = 0; i < m_nObjects; i++) 
+			m_ppObjects[i]->Animate(fElapsedTime);
 
 	// 추가
 	XMFLOAT3 player_position = m_pPlayer->GetPosition();
@@ -564,14 +583,16 @@ void CScene::Animate(float fElapsedTime)
 	CheckPlayerByBulletCollisions();
 	
 	// 추가
-	for (int i = 0; i < m_nObjects; i++) {
-		((CExplosiveObject*)m_ppObjects[i])->delay += fElapsedTime * 100;
+	if (m_pPlayer->game_start) {
+		for (int i = 0; i < m_nObjects; i++) {
+			((CExplosiveObject*)m_ppObjects[i])->delay += fElapsedTime * 100;
 
-		if (((CExplosiveObject*)m_ppObjects[i])->delay > 60) {
+			if (((CExplosiveObject*)m_ppObjects[i])->delay > 60) {
 
-			((CExplosiveObject*)m_ppObjects[i])->FireBullet(m_pPlayer);
+				((CExplosiveObject*)m_ppObjects[i])->FireBullet(m_pPlayer);
 
-			((CExplosiveObject*)m_ppObjects[i])->delay = 0;
+				((CExplosiveObject*)m_ppObjects[i])->delay = 0;
+			}
 		}
 	}
 }
@@ -583,7 +604,10 @@ void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 	CGraphicsPipeline::SetViewPerspectiveProjectTransform(&pCamera->m_xmf4x4ViewPerspectiveProject);
 	m_pWallsObject->Render(hDCFrameBuffer, pCamera);
 
-	for (int i = 0; i < m_nObjects; i++) m_ppObjects[i]->Render(hDCFrameBuffer, pCamera);
+	// 추가
+	if(m_pPlayer->game_start)
+		for (int i = 0; i < m_nObjects; i++) 
+			m_ppObjects[i]->Render(hDCFrameBuffer, pCamera);
 
 	if (m_pPlayer) {
 		m_pPlayer->Render(hDCFrameBuffer, pCamera);
@@ -595,8 +619,10 @@ void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)
 	}
 
 	// 추가
-	for (int i = 0; i < m_nVoxels; ++i) 
-		m_pVoxel[i]->Render(hDCFrameBuffer, pCamera);
+	if (!m_pPlayer->game_start)
+		for (int i = 0; i < m_nVoxels; ++i) {
+			m_pVoxel[i]->Render(hDCFrameBuffer, pCamera);
+		}
 
 //UI
 #ifdef _WITH_DRAW_AXIS

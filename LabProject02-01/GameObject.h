@@ -199,9 +199,10 @@ public:
 
 	CCamera* m_pCamera = NULL;
 
+	float rotation{};
+
 public:
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float x, float y, float z);
-
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 };
